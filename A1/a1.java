@@ -95,15 +95,21 @@ class cowin
         System.out.print("Number of doses: ");
         doses_reqd = scan_i.nextInt();
 
-        System.out.print("Gap between Doses: ");
-        gap = scan_i.nextInt();
+        if(doses_reqd!=1)
+        {
+            System.out.print("Gap between Doses: ");
+            gap = scan_i.nextInt();
+        }
+
+        else
+            gap = 0;
 
         vaccine v = new vaccine(name, doses_reqd, gap);
         v.out();
 
-        ArrayList vaccine_info = new ArrayList<>();
-        vaccine_info.add(doses_reqd);
-        vaccine_info.add(gap);
+        // ArrayList vaccine_info = new ArrayList<>();
+        // vaccine_info.add(doses_reqd);
+        // vaccine_info.add(gap);
 
         vaccineMap.put(name, v);
     }
@@ -135,12 +141,6 @@ class cowin
         System.out.print("Age: ");
         age = scan_i.nextInt();
 
-        if(age < 18)
-        {
-            System.out.println("Vaccination only available for 18+");
-            return;
-        }
-
         while(true)
         {
             System.out.print("Unique ID (12 digit number): ");
@@ -162,7 +162,11 @@ class cowin
 
         citizen c = new citizen(name, age, UID);
         c.out();
-
+        if(age < 18)
+        {
+            System.out.println("Vaccination only available for 18+");
+            return;
+        }
         citizenMap.put(UID, c);
     }
 
@@ -238,6 +242,12 @@ class cowin
 
         citizen c = citizenMap.get(uid);
 
+        if(c.getVaccinationStatus().equals("FULLY VACCINATED"))
+        {
+            System.out.println("Person is fully vaccinated");
+            return;
+        }
+
         System.out.println("1. Search by area");
         System.out.println("2. Search by vaccine");
         System.out.println("3. Exit");
@@ -284,7 +294,38 @@ class cowin
 
         if(choice == 2)
         {
+            ArrayList<String> availableHospitals = new ArrayList<>();
+            String vaccine_name;
             System.out.println("Searching by vaccine...");
+            System.out.print("Enter vaccine name: ");
+            vaccine_name = scan_s.nextLine();
+
+            for(hospital h: hospitalMap.values())
+            {
+                if(h.getVaccineNames().contains(vaccine_name))
+                {
+                    System.out.println(h.getId() + " " + h.getName());
+                    availableHospitals.add(h.getId());
+                }
+            }
+
+            String h_id;
+            System.out.print("Enter hospital Id: ");
+            h_id = scan_s.nextLine();
+
+            if(!availableHospitals.contains(h_id))
+            {
+                System.out.println("Invalid hospital!");
+                return;
+            }
+
+            hospital h = hospitalMap.get(h_id);
+            h.displaySlotsForBooking();
+
+            System.out.print("Choose slot: ");
+            int slot_no = scan_i.nextInt();
+
+            c.getVaccinated(slot_no, h, vaccineMap);
         }
     }
 
@@ -353,6 +394,11 @@ class vaccine
     {
         return doses_reqd;
     }
+
+    int getGap()
+    {
+        return gap;
+    }
 }
 
 class hospital
@@ -415,7 +461,7 @@ class hospital
         }
     }
 
-    String takeVaccineFromHospital(int slot_no)
+    String takeVaccineFromHospital(int slot_no, String vaccine_taken, String vaccination_status)
     {
         int cnt = 0;
         String vaccine_name = "";
@@ -424,13 +470,47 @@ class hospital
             if(slot_no == cnt)
             {
                 vaccine_name = i.getName();
-                i.reduceQuantity(1);
+                if(vaccination_status.equals("PARTIALLY VACCINATED"))
+                {
+                    if(!vaccine_name.equals(vaccine_taken))
+                    {
+                        System.out.println("Can't take 2 different vaccines!!");
+                        return "-1";
+                    }
+                }
             }
 
             cnt++;
         }
 
         return vaccine_name;
+    }
+
+    int getDayOfVaccination(int slot_no)
+    {
+        int cnt = 0, day = 0;
+        for(slot i: slots)
+        {
+            if(slot_no == cnt)
+            {
+                day = i.getDay();
+                i.reduceQuantity(1);
+            }
+            cnt++;
+        }
+
+        return day;
+    }
+
+    ArrayList<String> getVaccineNames()
+    {
+        ArrayList<String> s = new ArrayList<>();
+        for(slot i: slots)
+        {
+            s.add(i.getName());
+        }
+
+        return s;
     }
 
     String getPin()
@@ -451,7 +531,7 @@ class hospital
 
 class citizen
 {
-    String name, UID, vaccination_status, vaccine_taken;
+    String name, UID, vaccination_status, vaccine_taken = "\0";
     int age, no_of_doses = 0, next_due_date, reqd_number_of_doses;
 
     citizen(String n, int a, String id)
@@ -470,14 +550,21 @@ class citizen
 
     void getVaccinated(int slot_no, hospital h, HashMap<String, vaccine> vaccineMap)
     {
-        String vaccine_name = h.takeVaccineFromHospital(slot_no);
+        String vaccine_name = h.takeVaccineFromHospital(slot_no, vaccine_taken, vaccination_status);
+        if(vaccine_name == "-1")
+            return;
+        int day_of_vaccination = h.getDayOfVaccination(slot_no);
 
         vaccine_taken = vaccine_name;
         no_of_doses++;
         reqd_number_of_doses = vaccineMap.get(vaccine_taken).getDoses();
-        
+
         if(no_of_doses > 0 && no_of_doses < reqd_number_of_doses)
+        {
             vaccination_status = "PARTIALLY VACCINATED";
+            next_due_date = day_of_vaccination + vaccineMap.get(vaccine_taken).getGap();
+        }
+
         if(no_of_doses == reqd_number_of_doses)
             vaccination_status = "FULLY VACCINATED";
 
@@ -488,13 +575,24 @@ class citizen
     void getVaccinationDetails()
     {
         System.out.println(vaccination_status);
+
+        if(vaccination_status.equals("REGISTERED"))
+            return;
         System.out.println("Vaccine given: " + vaccine_taken);
         System.out.println("No. of doses given: " + no_of_doses);
+
+        if(vaccination_status.equals("PARTIALLY VACCINATED"))
+            System.out.println("Next Dose due data: " + next_due_date);
     }
 
     int getAge()
     {
         return age;
+    }
+
+    String getVaccinationStatus()
+    {
+        return vaccination_status;
     }
 }
 
