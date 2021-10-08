@@ -106,11 +106,6 @@ class cowin
 
         vaccine v = new vaccine(name, doses_reqd, gap);
         v.out();
-
-        // ArrayList vaccine_info = new ArrayList<>();
-        // vaccine_info.add(doses_reqd);
-        // vaccine_info.add(gap);
-
         vaccineMap.put(name, v);
     }
 
@@ -132,7 +127,7 @@ class cowin
 
     void addCitizen()
     {
-        String name, UID;
+        String name, UID = "";
         int age;
         
         System.out.print("Citizen Name: ");
@@ -145,6 +140,12 @@ class cowin
         {
             System.out.print("Unique ID (12 digit number): ");
             UID = scan_s.nextLine();
+
+            if(UID.equals("exit"))
+            {
+                System.out.println("Exiting...");
+                return;
+            }
 
             if(UID.length() != 12)
             {
@@ -172,12 +173,18 @@ class cowin
 
     void addSlot()
     {
-        String h_id;
+        String h_id = "";
 
         while(true)
         {
             System.out.print("Enter Hospital Id: ");
             h_id = scan_s.nextLine();
+
+            if(h_id.equals("exit"))
+            {
+                System.out.println("Exiting...");
+                return;
+            }
 
             if(!hospitalMap.containsKey(h_id))
             {
@@ -227,12 +234,18 @@ class cowin
 
     void bookSlot()
     {
-        String uid;
+        String uid = "";
 
         while(true)
         {
             System.out.print("Enter patient Unique Id: ");
             uid = scan_s.nextLine();
+
+            if(uid.equals("exit"))
+            {
+                System.out.println("Exiting...");
+                return;
+            }
 
             if(!citizenMap.containsKey(uid))
                 System.out.println("No one exists with that UID!! Try Again");
@@ -331,9 +344,14 @@ class cowin
 
     void displayHospitalSlots()
     {
-        String h_id;
+        String h_id = "";
         while(true)
         {
+            if(h_id.equals("exit"))
+            {
+                System.out.println("Exiting...");
+                return;
+            }
             System.out.print("Enter Hospital Id: ");
             h_id = scan_s.nextLine();
 
@@ -360,6 +378,12 @@ class cowin
         {
             System.out.print("Enter patient Unique Id: ");
             uid = scan_s.nextLine();
+
+            if(uid.equals("exit"))
+            {
+                System.out.println("Exiting...");
+                return;
+            }
 
             if(!citizenMap.containsKey(uid))
                 System.out.println("No one exists with that UID!! Try Again");
@@ -494,12 +518,25 @@ class hospital
             if(slot_no == cnt)
             {
                 day = i.getDay();
-                i.reduceQuantity(1);
+                // i.reduceQuantity(1);
             }
             cnt++;
         }
 
         return day;
+    }
+
+    slot getSlot(int slot_no)
+    {
+        int cnt = 0;
+        for(slot i: slots)
+        {
+            if(slot_no == cnt)
+                return i;
+            cnt++;
+        }
+
+        return null;
     }
 
     ArrayList<String> getVaccineNames()
@@ -550,10 +587,15 @@ class citizen
 
     void getVaccinated(int slot_no, hospital h, HashMap<String, vaccine> vaccineMap)
     {
-        String vaccine_name = h.takeVaccineFromHospital(slot_no, vaccine_taken, vaccination_status);
-        if(vaccine_name == "-1")
-            return;
-        int day_of_vaccination = h.getDayOfVaccination(slot_no);
+        // String vaccine_name = h.takeVaccineFromHospital(slot_no, vaccine_taken, vaccination_status);
+        // if(vaccine_name == "-1")
+        //     return;
+        
+        // int day_of_vaccination = h.getDayOfVaccination(slot_no);
+
+        slot vaccine_Slot = h.getSlot(slot_no);
+        String vaccine_name = vaccine_Slot.getName();
+        int day_of_vaccination = vaccine_Slot.getDay();
 
         vaccine_taken = vaccine_name;
         no_of_doses++;
@@ -563,6 +605,13 @@ class citizen
         {
             vaccination_status = "PARTIALLY VACCINATED";
             next_due_date = day_of_vaccination + vaccineMap.get(vaccine_taken).getGap();
+        }
+
+        if(day_of_vaccination < next_due_date)
+        {
+            System.out.println("Wait for next due date!");
+            no_of_doses--;
+            return;
         }
 
         if(no_of_doses == reqd_number_of_doses)
@@ -636,4 +685,3 @@ class slot
         return day_number;
     }
 }
-
