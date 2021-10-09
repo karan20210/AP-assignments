@@ -43,7 +43,6 @@ class a1
 // hospital. If it is, it's added to the availableHospital arrayList. The only difference in this implementation is that it does not display the slots
 // of other vaccines. 
 
+// displayHospitalSlot takes the hospital ID, fetches the corresponding hospital object, and then iterates over the slot arrayList
 
-
-
-
+// Get vaccination details get the citizen object through the UID, and displays the information
