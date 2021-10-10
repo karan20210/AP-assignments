@@ -216,8 +216,6 @@ public class cowin
             hospital h = hospitalMap.get(h_id);
             boolean exists = h.checkIfSlotExists(vaccines.get(vax), day_no);
 
-            System.out.println("Exists: " + exists);
-
             if(!exists)
             {
                 slot s = new slot(day_no, quantity, h_id, vaccines.get(vax));
