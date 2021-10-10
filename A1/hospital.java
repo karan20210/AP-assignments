@@ -49,31 +49,39 @@ public class hospital
         }
     }
 
-    public int displaySlotsForBooking()
+    public int displaySlotsForBooking(citizen c)
     {
-        int cnt = 0;
+        int cnt = 0, x = 0;
         for(slot i: slots)
         {
-            System.out.print(cnt + " --> ");
-            i.displaySlot();
-            cnt++;
-        }
-
-        return cnt;
-    }
-
-    public void displaySlotsForBooking(String vac_name)
-    {
-        int cnt = 0;
-        for(slot i: slots)
-        {
-            if(i.getName().equals(vac_name))
+            if(c.eligible(i))
             {
                 System.out.print(cnt + " --> ");
                 i.displaySlot();
+                x++;
             }
             cnt++;
         }
+
+        return x;
+    }
+
+    public int displaySlotsForBooking(String vac_name, citizen c)
+    {
+        int cnt = 0, x = 0;
+        for(slot i: slots)
+        {
+            if(i.getName().equals(vac_name) && c.eligible(i))
+            {
+                System.out.print(cnt + " --> ");
+                i.displaySlot();
+                x++;
+            }
+
+            cnt++;
+        }
+
+        return x;
     }
 
     slot getSlot(int slot_no)

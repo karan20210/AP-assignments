@@ -79,6 +79,13 @@ public class citizen
         return age;
     }
 
+    boolean eligible(slot i)
+    {
+        if(i.getDay() < next_due_date && vaccination_status.equals("PARTIALLY VACCINATED"))
+            return false;
+        return true;
+    }
+
     String getVaccinationStatus()
     {
         return vaccination_status;

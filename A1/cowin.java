@@ -37,7 +37,7 @@ public class cowin
         System.out.println("7. Check vaccination status");
         System.out.println("8. Exit");
 
-        System.out.print("Enter number: ");
+        System.out.print("Enter choice: ");
         int c = scan.nextInt();
 
         switch(c)
@@ -295,7 +295,7 @@ public class cowin
             }
 
             hospital h = hospitalMap.get(h_id);
-            int cnt = h.displaySlotsForBooking();
+            int cnt = h.displaySlotsForBooking(c);
 
             if(cnt!=0)
             {
@@ -306,7 +306,7 @@ public class cowin
             }
 
             else
-                System.out.println("No slots");
+                System.out.println("No suitable slots");
         }
 
         if(choice == 2)
@@ -345,12 +345,20 @@ public class cowin
             }
 
             hospital h = hospitalMap.get(h_id);
-            h.displaySlotsForBooking(vaccine_name);
+            int cnt = h.displaySlotsForBooking(vaccine_name, c);
 
-            System.out.print("Choose slot: ");
-            int slot_no = scan_i.nextInt();
+            if(cnt!=0)
+            {
+                System.out.print("Choose slot: ");
+                int slot_no = scan_i.nextInt();
 
-            c.getVaccinated(slot_no, h, vaccineMap);
+                c.getVaccinated(slot_no, h, vaccineMap);
+            }
+
+            else
+            {
+                System.out.println("No suitable slots");
+            }
         }
     }
 
