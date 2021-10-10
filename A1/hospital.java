@@ -110,6 +110,30 @@ public class hospital
         return s;
     }
 
+    boolean checkIfSlotExists(String vax_name, int day_no)
+    {
+        boolean exists = false;
+
+        for(slot i: slots)
+        {
+            if(i.getDay() == day_no && i.getName().equals(vax_name))
+                exists = true;
+        }
+
+        return exists;
+    }   
+
+    slot getSlotUpdateQuantity(String vax_name, int day_no)
+    {
+        for(slot i: slots)
+        {
+            if(i.getDay() == day_no && i.getName().equals(vax_name))
+                return i;
+        }
+
+        return null;
+    } 
+
     public void checkSlots()
     {
         ArrayList<slot> removable = new ArrayList<>();

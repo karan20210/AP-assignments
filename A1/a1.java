@@ -36,7 +36,7 @@ class a1
 // is added to an arrayList named availableHospitals. Then the hospital ID is inputted and the corresponding hospital object is fetched. Then we display
 // the slots for booking by iterating over the 'slots' arraylist inside the hospital object. After that the slot number is chosen and then we 
 // call the getVaccinated() function for the citizen. It firstly gets the vaccine slot from the slot number and hospital. It returns back if there is no suitable slot
-// It then checks whether the citizen's vaccination status and updates the new status and the next due date accordingly. It then reduces the quantity of the 
+// It then checks the citizen's vaccination status and updates the new status and the next due date accordingly. It then reduces the quantity of the 
 // vaccine in the chosen slot by 1. It then checks the Slots in the hospital and removes a slot if it has 0 vaccines. 
 
 // Search by vaccine is quite similar. It inputs the reqd vaccine name and then checks whether it is present in an arrayList of all vaccines in all slots of the

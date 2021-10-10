@@ -30,6 +30,11 @@ public class slot
         quantity = quantity - a;
     }
 
+    public void addQuantity(int a)
+    {
+        quantity = quantity + a;
+    }
+
     String getName()
     {
         return vaccine;

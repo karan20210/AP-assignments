@@ -6,7 +6,6 @@ public class cowin
     Scanner scan_i = new Scanner(System.in);
 
     //HashMap for vaccines
-    // HashMap<String, ArrayList> vaccineMap = new HashMap<>();
     HashMap<String, vaccine> vaccineMap = new HashMap<>();
 
     // HashMap for hospital
@@ -200,7 +199,7 @@ public class cowin
             quantity = scan_i.nextInt();
             System.out.println("Select Vaccine: ");
 
-            Set<String> keys = vaccineMap.keySet();
+            Set<String> keys = vaccineMap.keySet();     // Used to get the vaccine names
             int cnt = 0;
 
             ArrayList<String> vaccines = new ArrayList<>();
@@ -214,9 +213,24 @@ public class cowin
 
             vax = scan_i.nextInt();
 
-            slot s = new slot(day_no, quantity, h_id, vaccines.get(vax));
-            s.out();
-            hospitalMap.get(h_id).addSlot(s, slotMap);
+            hospital h = hospitalMap.get(h_id);
+            boolean exists = h.checkIfSlotExists(vaccines.get(vax), day_no);
+
+            System.out.println("Exists: " + exists);
+
+            if(!exists)
+            {
+                slot s = new slot(day_no, quantity, h_id, vaccines.get(vax));
+                s.out();
+                h.addSlot(s, slotMap);
+            }
+
+            else
+            {
+                slot s = h.getSlotUpdateQuantity(vaccines.get(vax), day_no);
+                s.addQuantity(quantity);
+                s.out();
+            }
         }
 
 
