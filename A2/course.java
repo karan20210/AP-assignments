@@ -11,6 +11,8 @@ public class course {
     private ArrayList<material> materials = new ArrayList<>();
     private ArrayList<exam> exams = new ArrayList<>();
 
+    private ArrayList<comment> comments = new ArrayList<>();
+
     String current;
 
     user currentUser;
@@ -106,7 +108,9 @@ public class course {
             instructor ins = (instructor)currentUser;
             switch(opt)
             {
-                case 1: materials.add(ins.addClassMaterial());
+                case 1: material m = ins.addClassMaterial();
+                        if(m != null)
+                            materials.add(m);
                         break;
                 
                 case 2: exam e = ins.addAssessements();
@@ -123,6 +127,12 @@ public class course {
                         break;
 
                 case 6: exams = ins.closeAssessements(exams);
+                        break;
+                    
+                case 8: comments.add(currentUser.addComments());
+                        break;
+
+                case 7: currentUser.viewComments(comments);
                         break;
 
                 case 9: System.out.println("Logging out...");
@@ -150,7 +160,12 @@ public class course {
                 
                 case 4: stu.viewGrades();
                         break;
+    
+                case 6: comments.add(currentUser.addComments());
+                        break;
 
+                case 5: currentUser.viewComments(comments);
+                        break;
 
                 case 7: System.out.println("Logging out...");
                         Logout();

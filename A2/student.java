@@ -90,6 +90,14 @@ public class student implements user {
             System.out.print("Enter filename of assignment: ");
             String filename = scan_s.nextLine();
 
+            int index = filename.indexOf(".");
+
+            if(index == -1 || !filename.substring(index+1).equals("zip"))
+            {
+                System.out.println("Only upload zip files!!");
+                return;
+            }
+
             a.setFileName(filename);
             a.setStatus("submitted");
             
@@ -134,15 +142,23 @@ public class student implements user {
     }
 
     @Override
-    public void addComments()
+    public comment addComments()
     {
-        System.out.println("Add comments Student: ");
+        System.out.print("Enter comment: ");
+        String comment_content = scan_s.nextLine();
+        comment c = new comment(comment_content, name);
+        return c;
     }
 
     @Override
-    public void viewComments()
+    public void viewComments(ArrayList<comment> c)
     {
-        System.out.println("View comments Student: ");
+        System.out.println();
+        for(comment i: c)
+        {
+            i.viewComment();
+            System.out.println();
+        }
     }
 
     @Override

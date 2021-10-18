@@ -65,9 +65,17 @@ public class instructor implements user
         {
             System.out.print("Enter topic of video: ");
             String topic = scan_s.nextLine();
-
+            
             System.out.print("Enter filename: ");
             String filename = scan_s.nextLine();
+
+            int index = filename.indexOf(".");
+
+            if(index == -1 || !filename.substring(index+1).equals("mp4"))
+            {
+                System.out.println("Only upload mp4 files!!");
+                return null;
+            }
 
             m = new video(topic, filename, this);
         }
@@ -226,15 +234,23 @@ public class instructor implements user
     }
 
     @Override
-    public void addComments()
+    public comment addComments()
     {
-        System.out.println("Add comments instructor: ");
+        System.out.print("Enter comment: ");
+        String comment_content = scan_s.nextLine();
+        comment c = new comment(comment_content, name);
+        return c;
     }
 
     @Override
-    public void viewComments()
+    public void viewComments(ArrayList<comment> c)
     {
-        System.out.println("View comments instructor: ");
+        System.out.println();
+        for(comment i: c)
+        {
+            i.viewComment();
+            System.out.println();
+        }
     }
 
     @Override
