@@ -18,7 +18,7 @@ public class player {
         total_points = 0;
     }
 
-    public void play()
+    public int play()
     {
         int number = d.roll();
 
@@ -27,15 +27,15 @@ public class player {
         if(moves == 0 && number!=1)
         {
             System.out.println("Game cannot start until you get 1");
-            return;
+            return 0;
         }
 
         current_position += number;
         if(current_position > 13)
         {
-            System.out.println("Invalid");
+            System.out.println("Cannot move 2 steps from 12");
             current_position -= number;
-            return;
+            return 0;
         }
 
         total_points += (g.getFloor(current_position).getPoints());
@@ -56,8 +56,10 @@ public class player {
         {
             System.out.println("GAME OVER");
             System.out.println(name + " accumulated " + total_points + " points");
-            java.lang.System.exit(0);
+            return 1;
         }
+
+        return 0;
     }
 
     public void changeFloor(floor f)
